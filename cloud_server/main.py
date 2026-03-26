@@ -16,46 +16,59 @@ api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 async def get_api_key(header_value: str = Security(api_key_header)):
     if API_KEY and header_value == API_KEY:
         return header_value
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail="Accesso negato: API Key non valida o non configurata"
-    )
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="API Key Errata")
 
 MODELS = {}
 MODEL_FILES = {
-    "inception": "inception_v3.h5",
-    "mobilenet": "mobilenet_v2.h5",
-    "resnet": "resnet_50.h5"
+    "inception": "inception_model",
+    "mobilenet": "mobilenet_model"
 }
 
 @app.on_event("startup")
 def load_all_models():
     for m_id, m_path in MODEL_FILES.items():
-        if os.path.exists(m_path):
-            print(f"Caricamento modello: {m_id}...")
-            MODELS[m_id] = tf.keras.models.load_model(m_path, compile=False) 
-    print("Tutti i modelli sono pronti!")
+        if os.path.exists(m_path) and os.path.isdir(m_path):
+            print(f"Caricamento modello via TFSMLayer: {m_id}...")
+            try:
+                MODELS[m_id] = tf.keras.layers.TFSMLayer(m_path, call_endpoint='serving_default')
+                print(f"-> {m_id} caricato con successo!")
+            except Exception as e:
+                print(f"Errore critico caricando {m_id}: {e}")
+        else:
+            print(f"ATTENZIONE: Cartella {m_path} non trovata!")
+            
+    print(f"Inizializzazione completata. Modelli in memoria: {list(MODELS.keys())}")
 
 @app.post("/predict")
 async def predict(
-    model_id: str = Query(...), 
+    model_id: str = Query(...),
     file: UploadFile = File(...),
     _auth: str = Depends(get_api_key)
 ):
     if model_id not in MODELS:
-        raise HTTPException(status_code=404, detail="Modello non trovato sul server")
+        raise HTTPException(status_code=404, detail="Modello non trovato in RAM")
 
     current_model = MODELS[model_id]
     
     contents = await file.read()
     img = Image.open(io.BytesIO(contents)).convert('RGB')
     
-    input_shape = current_model.input_shape
-    img = img.resize((input_shape[1], input_shape[2]))
+    target_size = (224, 224) 
+
+    img = img.resize(target_size)
     img_array = np.array(img, dtype=np.float32) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    predictions = current_model(img_array, training=False).numpy()
+    tensor_input = tf.convert_to_tensor(img_array)
+    
+    raw_predictions = current_model(tensor_input)
+    
+    if isinstance(raw_predictions, dict):
+        first_key = list(raw_predictions.keys())[0]
+        predictions = raw_predictions[first_key].numpy()
+    else:
+        predictions = raw_predictions.numpy()
+    
     class_idx = np.argmax(predictions[0])
     confidence = float(np.max(predictions[0]))
     
@@ -63,4 +76,4 @@ async def predict(
         "model_used": model_id,
         "prediction": "BUY" if class_idx == 1 else "SELL",
         "confidence": round(confidence * 100, 2)
-    }
+        }

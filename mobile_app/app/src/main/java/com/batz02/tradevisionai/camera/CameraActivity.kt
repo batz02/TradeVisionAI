@@ -55,11 +55,10 @@ class CameraActivity : AppCompatActivity() {
 
 
     private val availableModels = listOf(
-        ModelInfo("local_v2", "MobileNet V2 (Edge)", ModelType.LOCAL_TFLITE, "mobilenet_v2_quant.tflite"),
-        ModelInfo("local_v3", "MobileNet V3 (Edge)", ModelType.LOCAL_TFLITE, "mobilenet_v3_small_quant.tflite"),
-        ModelInfo("inception", "☁️ AWS: Inception V3 (Preciso)", ModelType.CLOUD_AWS),
-        ModelInfo("mobilenet", "☁️ AWS: MobileNet V2 (Veloce)", ModelType.CLOUD_AWS),
-        ModelInfo("resnet", "☁️ AWS: ResNet 50 (Bilanciato)", ModelType.CLOUD_AWS)
+        ModelInfo("local_v2", "MobileNet V2 Quant (On-device)", ModelType.LOCAL_TFLITE, "mobilenet_v2_quant.tflite"),
+        ModelInfo("local_v3", "MobileNet V3 Quant (On-device)", ModelType.LOCAL_TFLITE, "mobilenet_v3_small_quant.tflite"),
+        ModelInfo("inception", "Inception V3 (Cloud)", ModelType.CLOUD_AWS),
+        ModelInfo("mobilenet", "MobileNet V2 (Cloud)", ModelType.CLOUD_AWS)
     )
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -192,16 +191,17 @@ class CameraActivity : AppCompatActivity() {
                 var resultString = ""
 
                 if (selectedModel.type == ModelType.LOCAL_TFLITE) {
-
                     val modelFilename = selectedModel.assetName ?: "mobilenet_v2_quant.tflite"
                     resultString = "Risultato Edge: ${analyzer.analyzeGraph(bitmap, modelFilename)}"
                 } else {
-
                     resultString = withContext(Dispatchers.IO) {
                         val awsClient = AwsApiClient()
-                        val endpointUrl = "http://IL_TUO_IP:8000/predict"
 
-                        awsClient.analyzeImageOnCloud(tempFile, endpointUrl, selectedModel.id)
+                        val modelId = selectedModel.id
+
+                        val baseUrl = "http:///predict"
+
+                        awsClient.analyzeImageOnCloud(tempFile, baseUrl, modelId)
                     }
                 }
 
@@ -212,7 +212,7 @@ class CameraActivity : AppCompatActivity() {
                 startActivity(intent)
 
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("AWS_ERROR", "Errore: ${e.message}")
                 Toast.makeText(this@CameraActivity, "Errore durante l'elaborazione.", Toast.LENGTH_SHORT).show()
             }
         }

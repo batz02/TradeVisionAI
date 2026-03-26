@@ -11,9 +11,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
-COPY *.h5 . 
-
-ENV TF_USE_LEGACY_KERAS=1
+COPY mobilenet_model/ ./mobilenet_model/ 
+COPY inception_model/ ./inception_model/
 
 EXPOSE 8000
 

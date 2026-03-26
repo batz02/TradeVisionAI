@@ -25,8 +25,8 @@ class AwsApiClient {
 
             val request = Request.Builder()
                 .url(urlWithParam)
-
-                .addHeader("X-API-KEY", "IL_TUO_SEGRETO_AWS")
+                .addHeader("X-API-KEY", "")
+                .addHeader("accept", "application/json")
                 .post(requestBody)
                 .build()
 
@@ -37,9 +37,9 @@ class AwsApiClient {
                 val json = JSONObject(responseBody)
                 val prediction = json.getString("prediction")
                 val confidence = json.getDouble("confidence")
-                "$prediction\n(Cloud: $confidence%)"
+                "$prediction\n($confidence%)"
             } else {
-                "Errore Server: ${response.code}"
+                "Errore ${response.code}: ${responseBody ?: "Nessun dettaglio"}"
             }
         } catch (e: Exception) {
             "Errore di rete: ${e.message}"
