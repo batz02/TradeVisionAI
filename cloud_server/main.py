@@ -33,7 +33,7 @@ def load_all_models():
     for m_id, m_path in MODEL_FILES.items():
         if os.path.exists(m_path):
             print(f"Caricamento modello: {m_id}...")
-            MODELS[m_id] = tf.keras.models.load_model(m_path)
+            MODELS[m_id] = tf.keras.models.load_model(m_path, compile=False) 
     print("Tutti i modelli sono pronti!")
 
 @app.post("/predict")
