@@ -30,6 +30,7 @@
         <activity android:name=".ui.SettingsActivity" />
         <activity android:name=".camera.CameraActivity" />
         <activity android:name=".ui.AnalysisResultActivity" />
+        <activity android:name=".ui.AnalysisHistoryActivity" />
     </application>
 
 </manifest>

@@ -28,6 +28,8 @@ import com.batz02.tradevisionai.R
 import com.batz02.tradevisionai.ml.TradeVisionAnalyzer
 import com.batz02.tradevisionai.network.AwsApiClient
 import com.batz02.tradevisionai.ui.AnalysisResultActivity
+import com.batz02.tradevisionai.db.AppDatabase
+import com.batz02.tradevisionai.db.AnalysisEntity
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -179,10 +181,11 @@ class CameraActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val tempFile = java.io.File(cacheDir, "temp_analysis_image.jpg")
+                val timestamp = System.currentTimeMillis()
+                val savedFile = java.io.File(filesDir, "analysis_$timestamp.jpg")
 
                 withContext(Dispatchers.IO) {
-                    val outputStream = java.io.FileOutputStream(tempFile)
+                    val outputStream = java.io.FileOutputStream(savedFile)
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
                     outputStream.flush()
                     outputStream.close()
@@ -196,18 +199,28 @@ class CameraActivity : AppCompatActivity() {
                 } else {
                     resultString = withContext(Dispatchers.IO) {
                         val awsClient = AwsApiClient()
-
                         val modelId = selectedModel.id
-
-                        val baseUrl = "http:///predict"
-
-                        awsClient.analyzeImageOnCloud(tempFile, baseUrl, modelId)
+                        val baseUrl = "http://IP:PORT/predict"
+                        awsClient.analyzeImageOnCloud(savedFile, baseUrl, modelId)
                     }
                 }
 
+                val accuracyResult = "${selectedModel.displayName}\n\n$resultString"
+
+                withContext(Dispatchers.IO) {
+                    val dao = AppDatabase.getDatabase(this@CameraActivity).analysisDao()
+                    val entity = AnalysisEntity(
+                        imagePath = savedFile.absolutePath,
+                        modelName = selectedModel.displayName,
+                        resultText = accuracyResult,
+                        timestamp = timestamp
+                    )
+                    dao.insertAnalysis(entity)
+                }
+
                 val intent = Intent(this@CameraActivity, AnalysisResultActivity::class.java)
-                intent.putExtra("IMAGE_PATH", tempFile.absolutePath)
-                intent.putExtra("ACCURACY_RESULT", "${selectedModel.displayName}\n\n$resultString")
+                intent.putExtra("IMAGE_PATH", savedFile.absolutePath)
+                intent.putExtra("ACCURACY_RESULT", accuracyResult)
 
                 startActivity(intent)
 

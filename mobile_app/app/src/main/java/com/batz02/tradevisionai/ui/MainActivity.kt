@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         tvStatus = findViewById(R.id.tvStatus)
         val btnOpenAI = findViewById<Button>(R.id.btnOpenAI)
+        val btnAIHistory = findViewById<Button>(R.id.btnAIHistory)
         val btnGoToSearch = findViewById<Button>(R.id.btnGoToSearch)
         val btnGoToWatchlist = findViewById<Button>(R.id.btnGoToWatchlist)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewWatchlist)
@@ -60,6 +61,10 @@ class MainActivity : AppCompatActivity() {
 
         btnOpenAI.setOnClickListener {
             startActivity(Intent(this, CameraActivity::class.java))
+        }
+
+        btnAIHistory.setOnClickListener {
+            startActivity(Intent(this, AnalysisHistoryActivity::class.java))
         }
 
         btnGoToSearch.setOnClickListener {

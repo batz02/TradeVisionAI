@@ -25,7 +25,7 @@ class AwsApiClient {
 
             val request = Request.Builder()
                 .url(urlWithParam)
-                .addHeader("X-API-KEY", "")
+                .addHeader("X-API-KEY", "API")
                 .addHeader("accept", "application/json")
                 .post(requestBody)
                 .build()

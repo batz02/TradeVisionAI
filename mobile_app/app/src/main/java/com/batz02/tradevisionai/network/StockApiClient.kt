@@ -11,7 +11,7 @@ data class NewsItem(val headline: String, val url: String)
 class StockApiClient {
 
     private val client = OkHttpClient()
-    private val API_KEY = ""
+    private val API_KEY = "API"
 
     fun getStockPrice(ticker: String): String {
         val url = "https://finnhub.io/api/v1/quote?symbol=$ticker&token=$API_KEY"

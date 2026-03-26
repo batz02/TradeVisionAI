@@ -60,6 +60,17 @@
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/btnGoToWatchlist" />
 
+    <Button
+        android:id="@+id/btnAIHistory"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#8A2BE2"
+        android:text="Storico Analisi AI"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/btnOpenAI" />
+
     <TextView
         android:id="@+id/tvHistoryHeader"
         android:layout_width="wrap_content"
@@ -69,7 +80,7 @@
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/btnOpenAI"
+        app:layout_constraintTop_toBottomOf="@id/btnAIHistory"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
