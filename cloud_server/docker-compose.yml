@@ -1,0 +1,14 @@
+services:
+  trading-analysis:
+    build: .
+    container_name: trading_api_v1
+    ports:
+      - "30080:8000"
+    environment:
+    - API_KEY_SECRET=
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

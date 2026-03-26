@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0D1117"
+    android:padding="20dp">
+
+    <EditText
+        android:id="@+id/etSearchQuery"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#161B22"
+        android:hint="Cerca per nome o ticker (es. Apple)"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#8B949E"
+        android:paddingHorizontal="16dp"/>
+
+    <Button
+        android:id="@+id/btnDoSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#1F6FEB"
+        android:textColor="#FFFFFF"
+        android:text="Cerca" />
+
+    <ListView
+        android:id="@+id/listViewResults"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp" />
+</LinearLayout>

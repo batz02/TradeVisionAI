@@ -1,0 +1,70 @@
+# Cache di sistema e file locali di Android Studio
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+local.properties
+
+# File specifici di Android Studio (IDE)
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+*.iml
+*.ipr
+*.iws
+
+# File generati dai test
+/captures/
+.navigation/
+
+# Log e file temporanei
+*.log
+/tmp/
+
+# File del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Protezione chiavi e segreti (Fondamentale!)
+*.jks
+*.keystore
+google-services.json
+
+# MacOS file
+.DS_Store
+
+# Cartelle dell'ambiente virtuale (nomi comuni)
+venv/
+.venv/
+env/
+.env/
+ENV/
+bin/
+lib/
+include/
+share/
+
+# File compilati di Python
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribuzione / Pacchetti
+dist/
+build/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Librerie condivise e file di log
+*.so
+pip-log.txt
+pip-delete-this-directory.txt
