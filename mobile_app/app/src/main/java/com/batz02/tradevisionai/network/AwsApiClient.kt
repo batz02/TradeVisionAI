@@ -10,7 +10,6 @@ import org.json.JSONObject
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-// NUOVA: Classe dati per gestire la risposta dal tuo Docker
 data class TickerAnalysisResult(
     val label: String,
     val confidence: Float,
@@ -19,11 +18,10 @@ data class TickerAnalysisResult(
 
 class AwsApiClient {
     private val client = OkHttpClient.Builder()
-        .connectTimeout(60, TimeUnit.SECONDS) // Aumentato per dare tempo a Docker di generare il grafico
+        .connectTimeout(60, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    // 1. VECCHIA FUNZIONE (Sistemata per il nuovo baseUrl)
     fun analyzeImageOnCloud(imageFile: File, baseUrl: String, modelId: String): String {
         return try {
             val requestFile = imageFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
@@ -32,7 +30,6 @@ class AwsApiClient {
                 .addFormDataPart("file", imageFile.name, requestFile)
                 .build()
 
-            // Aggiungiamo qui l'endpoint /predict
             val urlWithParam = "$baseUrl/predict?model_id=$modelId"
 
             val request = Request.Builder()
@@ -58,9 +55,7 @@ class AwsApiClient {
         }
     }
 
-    // 2. NUOVA FUNZIONE: Chiede a Docker di generare e analizzare
     fun analyzeTickerOnCloud(baseUrl: String, ticker: String, modelId: String): TickerAnalysisResult {
-        // Aggiungiamo qui l'endpoint /analyze_ticker
         val url = "$baseUrl/analyze_ticker"
 
         val jsonRequest = JSONObject().apply {
@@ -86,7 +81,6 @@ class AwsApiClient {
             val confidence = jsonResponse.getDouble("confidence").toFloat()
             val base64Image = jsonResponse.getString("image_base64")
 
-            // Decodifica la stringa Base64 nell'immagine reale (byte array)
             val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
 
             return TickerAnalysisResult(label, confidence, imageBytes)

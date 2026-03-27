@@ -3,6 +3,7 @@ package com.batz02.tradevisionai.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -35,7 +36,7 @@ class DetailActivity : AppCompatActivity() {
         val tvDetailName = findViewById<TextView>(R.id.tvDetailName)
         val tvDetailPrice = findViewById<TextView>(R.id.tvDetailPrice)
         val btnSaveWatchlist = findViewById<Button>(R.id.btnSaveWatchlist)
-        val btnAutomatedAnalysis = findViewById<Button>(R.id.btnAutomatedAnalysis) // NUOVO BOTTONE
+        val btnAutomatedAnalysis = findViewById<Button>(R.id.btnAutomatedAnalysis)
         val containerNews = findViewById<LinearLayout>(R.id.containerNews)
 
         val ticker = intent.getStringExtra("TICKER") ?: return
@@ -47,11 +48,9 @@ class DetailActivity : AppCompatActivity() {
         var currentPriceStr = "0.0"
         val dao = AppDatabase.getDatabase(this).stockDao()
 
-        // --- Logica per chiamare Docker ---
         btnAutomatedAnalysis.setOnClickListener {
             eseguiAnalisiAutomaticaCloud(ticker)
         }
-        // ----------------------------------
 
         lifecycleScope.launch {
             val price = withContext(Dispatchers.IO) {
@@ -154,23 +153,19 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    // --- FUNZIONE CHE GESTISCE LA RICHIESTA AL DOCKER ---
     private fun eseguiAnalisiAutomaticaCloud(ticker: String) {
         Toast.makeText(this, "Generazione grafico in corso...", Toast.LENGTH_LONG).show()
 
         lifecycleScope.launch {
             try {
-                // Otteniamo il baseUrl dal file local.properties
                 val baseUrl = BuildConfig.AWS_API_URL
-                val modelId = "inception" // Forza Inception come richiesto
+                val modelId = "inception"
 
-                // Chiamata di rete per far lavorare il server
                 val result = withContext(Dispatchers.IO) {
                     val awsClient = AwsApiClient()
                     awsClient.analyzeTickerOnCloud(baseUrl, ticker, modelId)
                 }
 
-                // 1. Salviamo l'array di byte (l'immagine) come un file JPG
                 val timestamp = System.currentTimeMillis()
                 val savedFile = File(filesDir, "auto_analysis_${ticker}_$timestamp.jpg")
 
@@ -181,12 +176,11 @@ class DetailActivity : AppCompatActivity() {
                     outputStream.close()
                 }
 
-                // 2. Registriamo il risultato nel Database dell'AI
                 withContext(Dispatchers.IO) {
                     val dao = AppDatabase.getDatabase(this@DetailActivity).analysisDao()
                     val entity = AnalysisEntity(
                         imagePath = savedFile.absolutePath,
-                        modelName = "Cloud (Inception) - $ticker",
+                        modelName = "Analisi 7gg - $ticker",
                         label = result.label,
                         confidence = result.confidence,
                         timestamp = timestamp
@@ -194,7 +188,6 @@ class DetailActivity : AppCompatActivity() {
                     dao.insertAnalysis(entity)
                 }
 
-                // 3. Navighiamo all'Activity dei risultati per mostrare la UI
                 val intent = Intent(this@DetailActivity, AnalysisResultActivity::class.java)
                 intent.putExtra("IMAGE_PATH", savedFile.absolutePath)
                 intent.putExtra("PREDICTION_LABEL", result.label)
@@ -204,7 +197,8 @@ class DetailActivity : AppCompatActivity() {
                 startActivity(intent)
 
             } catch (e: Exception) {
-                Toast.makeText(this@DetailActivity, "Errore: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("AWS_ERROR", "Errore: ${e.message}")
+                Toast.makeText(this@DetailActivity,  "Modello non disponibile.", Toast.LENGTH_SHORT).show()
             }
         }
     }
