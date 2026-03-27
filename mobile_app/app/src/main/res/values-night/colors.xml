@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="app_background">#0D1117</color>
-    <color name="surface_background">#161B22</color>
+    <color name="bg_primary">#0D1117</color>
+    <color name="bg_secondary">#161B22</color>
+    <color name="bg_tertiary">#21262D</color>
+
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#8B949E</color>
+    <color name="text_on_accent">#000000</color> <color name="accent_green_bright">#00E676</color>
+    <color name="btn_green">#4CAF50</color>
+    <color name="btn_blue">#1F6FEB</color>
+    <color name="btn_purple">#8A2BE2</color>
+    <color name="btn_red">#D32F2F</color>
+    <color name="btn_gray">#607D8B</color>
 </resources>

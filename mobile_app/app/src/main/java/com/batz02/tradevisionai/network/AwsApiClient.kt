@@ -18,8 +18,8 @@ data class TickerAnalysisResult(
 
 class AwsApiClient {
     private val client = OkHttpClient.Builder()
-        .connectTimeout(60, TimeUnit.SECONDS)
-        .readTimeout(60, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(20, TimeUnit.SECONDS)
         .build()
 
     fun analyzeImageOnCloud(imageFile: File, baseUrl: String, modelId: String): String {

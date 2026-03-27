@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#0D1117">
+    android:background="@color/bg_primary">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="⚙️ Impostazioni"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:textSize="28sp"
         android:textStyle="bold"
         android:layout_marginBottom="32dp" />
@@ -20,8 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:text="🗑️ Svuota Cronologia Ricerche"
-        android:backgroundTint="#D32F2F"
-        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/btn_red"
+        android:textColor="@android:color/white"
         android:layout_marginBottom="16dp" />
 
     <Button
@@ -29,8 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:text="🤖 Svuota Storico Analisi AI"
-        android:backgroundTint="#8A2BE2"
-        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/btn_purple"
+        android:textColor="@android:color/white"
         android:layout_marginBottom="24dp" />
 
     <LinearLayout
@@ -44,8 +44,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="🌙 Modalità Scura (Demo)"
-            android:textColor="#FFFFFF"
+            android:text="🌙 Dark Mode"
+            android:textColor="@color/text_primary"
             android:textSize="18sp" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -67,7 +67,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="🖼️ Salva foto in Galleria"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_primary"
             android:textSize="18sp" />
 
         <androidx.appcompat.widget.SwitchCompat

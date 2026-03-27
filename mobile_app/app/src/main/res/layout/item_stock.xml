@@ -4,11 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:background="#161B22"
+    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="12dp"
+    android:background="@drawable/bg_card"
     android:orientation="horizontal"
     android:padding="16dp"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:elevation="2dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AAPL"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -29,7 +31,7 @@
             android:id="@+id/tvAddedAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#8B949E"
+            android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:layout_marginTop="4dp" />
     </LinearLayout>
@@ -40,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Prezzo: 150.00 $"
-        android:textColor="#00E676"
+        android:textColor="@color/accent_green_bright"
         android:textSize="14sp" />
 
     <ImageButton
@@ -49,6 +51,6 @@
         android:layout_height="32dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_menu_delete"
-        app:tint="#DA3633" />
+        app:tint="@color/btn_red" />
 
 </LinearLayout>

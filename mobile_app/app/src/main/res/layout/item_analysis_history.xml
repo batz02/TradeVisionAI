@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:background="#161B22"
-    android:padding="12dp">
-
-    <ImageView
-        android:id="@+id/ivThumbnail"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:scaleType="centerCrop"
-        android:background="#21262D"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_marginHorizontal="12dp"
+    android:background="@drawable/bg_card"
+    android:padding="12dp"
+    android:elevation="2dp"> <ImageView
+    android:id="@+id/ivThumbnail"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:scaleType="centerCrop"
+    android:background="@color/bg_tertiary"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvHistoryModel"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Modello AI"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +37,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:text="Risultato..."
-        android:textColor="#00E676"
+        android:textColor="@color/accent_green_bright"
         android:textSize="14sp"
         android:textStyle="bold"
         android:maxLines="2"
@@ -53,7 +53,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="12/10/2023 14:30"
-        android:textColor="#8B949E"
+        android:textColor="@color/text_secondary"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

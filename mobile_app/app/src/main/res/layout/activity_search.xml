@@ -3,17 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#0D1117"
+    android:background="@color/bg_primary"
     android:padding="20dp">
 
     <EditText
         android:id="@+id/etSearchQuery"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="#161B22"
+        android:background="@color/bg_secondary"
         android:hint="Cerca per nome o ticker (es. Apple)"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#8B949E"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
         android:paddingHorizontal="16dp"/>
 
     <Button
@@ -21,8 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:backgroundTint="#1F6FEB"
-        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/btn_blue"
+        android:textColor="@android:color/white"
         android:text="Cerca" />
 
     <ListView

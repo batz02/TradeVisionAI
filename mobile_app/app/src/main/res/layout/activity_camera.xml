@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0D1117">
+    android:background="@color/bg_primary">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
@@ -18,14 +18,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp"
-        android:background="#161B22"
+        android:background="@color/bg_secondary"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Scegli il modello AI:"
-            android:textColor="#8B949E" />
+            android:textColor="@color/text_secondary" />
 
         <Spinner
             android:id="@+id/spinnerModels"
@@ -33,7 +33,7 @@
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
-            android:background="#0D1117" />
+            android:background="@color/bg_primary" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,7 +46,8 @@
                 android:layout_weight="1"
                 android:layout_height="60dp"
                 android:layout_marginEnd="8dp"
-                android:backgroundTint="#607D8B"
+                android:backgroundTint="@color/btn_gray"
+                android:textColor="@android:color/white"
                 android:text="🖼️ Galleria" />
 
             <Button
@@ -54,8 +55,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="60dp"
-                android:backgroundTint="#00E676"
-                android:textColor="#000000"
+                android:backgroundTint="@color/accent_green_bright"
+                android:textColor="@color/text_on_accent"
                 android:textStyle="bold"
                 android:text="📷 Analizza" />
         </LinearLayout>

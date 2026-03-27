@@ -92,8 +92,15 @@ class DetailActivity : AppCompatActivity() {
                     val tvSingleNews = TextView(this@DetailActivity).apply {
                         text = "📰 ${news.headline}\n"
                         textSize = 14f
-                        setTextColor(ContextCompat.getColor(context, android.R.color.white))
-                        setPadding(0, 16, 0, 16)
+
+                        setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+
+                        setPadding(0, 24, 0, 24)
+
+                        val outValue = android.util.TypedValue()
+                        context.theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)
+                        setBackgroundResource(outValue.resourceId)
+
                         setOnClickListener {
                             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(news.url)))
                         }
@@ -107,7 +114,8 @@ class DetailActivity : AppCompatActivity() {
                     } else {
                         "Nessuna notizia recente trovata per questo titolo."
                     }
-                    setTextColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+
+                    setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
                     setPadding(0, 16, 0, 16)
                 }
                 containerNews.addView(tvNoNews)

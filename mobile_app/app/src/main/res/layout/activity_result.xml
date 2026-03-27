@@ -4,7 +4,7 @@
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0D1117"
+    android:background="@color/bg_primary"
     android:padding="24dp">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="📊 Risultato Analisi"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,7 +24,7 @@
         android:layout_height="250dp"
         android:layout_marginTop="20dp"
         android:scaleType="centerCrop"
-        android:background="#161B22"
+        android:background="@color/bg_secondary"
         app:layout_constraintTop_toBottomOf="@id/tvResultTitle" />
 
     <TextView
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Previsione del Modello:"
-        android:textColor="#8B949E"
+        android:textColor="@color/text_secondary"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/ivAnalyzedImage"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Caricamento..."
-        android:textColor="#00E676"
+        android:textColor="@color/accent_green_bright"
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -77,10 +77,10 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="#1F6FEB"
-            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/btn_blue"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:text="Condividi 📤" />
+            android:text="📤 Condividi" />
 
         <Button
             android:id="@+id/btnSaveGallery"
@@ -88,20 +88,20 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/btn_green"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:text="Salva 💾" />
+            android:text="💾 Salva" />
     </LinearLayout>
 
     <Button
         android:id="@+id/btnBackHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Torna alla Home"
+        android:text="🏠 Home"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#21262D"
-        android:textColor="#8B949E"
+        android:backgroundTint="@color/bg_tertiary"
+        android:textColor="@color/text_primary"
         app:layout_constraintTop_toBottomOf="@id/actionButtonsContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
