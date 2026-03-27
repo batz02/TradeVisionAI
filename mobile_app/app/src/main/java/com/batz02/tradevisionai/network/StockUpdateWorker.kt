@@ -1,4 +1,4 @@
-package com.batz02.tradevisionai.network // o .network, in base a dove lo metti
+package com.batz02.tradevisionai.network
 
 import android.content.Context
 import android.util.Log
@@ -22,14 +22,11 @@ class StockUpdateWorker(
                 val dao = AppDatabase.getDatabase(applicationContext).stockDao()
                 val apiClient = StockApiClient()
 
-                // 1. Prendi tutte le azioni dal DB
                 val stocks = dao.getAllStocks()
 
-                // 2. Per ogni azione, chiedi il nuovo prezzo all'API
                 for (stock in stocks) {
                     val newPrice = apiClient.getStockPrice(stock.ticker)
 
-                    // 3. Se non ci sono stati errori di rete, aggiorna il DB
                     if (newPrice != "Errore") {
                         dao.updateStockPrice(stock.ticker, newPrice)
                         Log.d("WORKER_TEST", "Aggiornato ${stock.ticker}: $newPrice")
@@ -41,7 +38,6 @@ class StockUpdateWorker(
 
             } catch (e: Exception) {
                 Log.e("WORKER_TEST", "Errore durante l'aggiornamento: ${e.message}")
-                // Se fallisce (es. niente internet), riproverà la prossima volta
                 Result.retry()
             }
         }

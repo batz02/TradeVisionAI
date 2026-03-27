@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onDeleteClick = { stockDaCancellare ->
-                // NOTA: Non serve più chiamare aggiornaCronologia() alla fine!
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         dao.hideFromHistory(stockDaCancellare.ticker)
@@ -66,14 +65,12 @@ class MainActivity : AppCompatActivity() {
         )
         recyclerView.adapter = adapter
 
-        // --- ASCOLTO REATTIVO DEL DATABASE ---
         lifecycleScope.launch {
             dao.getHistory().collect { lista ->
                 tvStatus.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
                 adapter.updateData(lista)
             }
         }
-        // -------------------------------------
 
         btnOpenAI.setOnClickListener {
             startActivity(Intent(this, CameraActivity::class.java))

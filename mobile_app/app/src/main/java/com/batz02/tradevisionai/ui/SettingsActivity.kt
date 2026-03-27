@@ -13,7 +13,7 @@ import com.batz02.tradevisionai.db.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File // Assicurati di avere questo import per le immagini
+import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -22,14 +22,13 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val btnClearHistory = findViewById<Button>(R.id.btnClearHistory)
-        val btnClearAIHistory = findViewById<Button>(R.id.btnClearAIHistory) // Nuovo bottone
+        val btnClearAIHistory = findViewById<Button>(R.id.btnClearAIHistory)
         val switchTheme = findViewById<SwitchCompat>(R.id.switchTheme)
 
         val db = AppDatabase.getDatabase(this)
         val stockDao = db.stockDao()
-        val analysisDao = db.analysisDao() // DAO per l'AI
+        val analysisDao = db.analysisDao()
 
-        // 1. Bottone: Cancella la cronologia dei titoli
         btnClearHistory.setOnClickListener {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
@@ -40,14 +39,11 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        // 2. Bottone: Cancella la cronologia AI e i file immagine
         btnClearAIHistory.setOnClickListener {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    // Ottieni tutte le analisi salvate per prendere i percorsi delle immagini
                     val allAnalyses = analysisDao.getAllHistory()
 
-                    // Cancella fisicamente ogni immagine dalla memoria
                     for (analysis in allAnalyses) {
                         val imgFile = File(analysis.imagePath)
                         if (imgFile.exists()) {
@@ -55,14 +51,12 @@ class SettingsActivity : AppCompatActivity() {
                         }
                     }
 
-                    // Svuota la tabella nel database
                     analysisDao.clearAllAnalysis()
                 }
                 Toast.makeText(this@SettingsActivity, "Storico AI e immagini eliminati!", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Gestione Tema (invariata)
         val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
         val isDarkMode = sharedPreferences.getBoolean("DARK_MODE", true)
 
