@@ -1,5 +1,6 @@
 package com.batz02.tradevisionai.network
 
+import com.batz02.tradevisionai.BuildConfig
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -25,7 +26,7 @@ class AwsApiClient {
 
             val request = Request.Builder()
                 .url(urlWithParam)
-                .addHeader("X-API-KEY", "API")
+                .addHeader("X-API-KEY", BuildConfig.AWS_API_KEY)
                 .addHeader("accept", "application/json")
                 .post(requestBody)
                 .build()

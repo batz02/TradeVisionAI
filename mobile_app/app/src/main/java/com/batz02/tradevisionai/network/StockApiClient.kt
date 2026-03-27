@@ -1,5 +1,6 @@
 package com.batz02.tradevisionai.network
 
+import com.batz02.tradevisionai.BuildConfig
 import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -11,7 +12,7 @@ data class NewsItem(val headline: String, val url: String)
 class StockApiClient {
 
     private val client = OkHttpClient()
-    private val API_KEY = "API"
+    private val API_KEY = BuildConfig.FINNHUB_API_KEY
 
     fun getStockPrice(ticker: String): String {
         val url = "https://finnhub.io/api/v1/quote?symbol=$ticker&token=$API_KEY"

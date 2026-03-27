@@ -74,6 +74,6 @@ async def predict(
     
     return {
         "model_used": model_id,
-        "prediction": "BUY" if class_idx == 1 else "SELL",
+        "prediction": "COMPRA" if class_idx == 1 else "VENDI",
         "confidence": round(confidence * 100, 2)
         }

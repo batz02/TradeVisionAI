@@ -41,7 +41,9 @@ class AnalysisHistoryActivity : AppCompatActivity() {
             onItemClick = { selectedItem ->
                 val intent = Intent(this@AnalysisHistoryActivity, AnalysisResultActivity::class.java)
                 intent.putExtra("IMAGE_PATH", selectedItem.imagePath)
-                intent.putExtra("ACCURACY_RESULT", selectedItem.resultText)
+                intent.putExtra("PREDICTION_LABEL", selectedItem.label)
+                intent.putExtra("PREDICTION_CONFIDENCE", selectedItem.confidence)
+                intent.putExtra("MODEL_NAME", selectedItem.modelName)
                 startActivity(intent)
             },
             onItemLongClick = { itemDaCancellare ->

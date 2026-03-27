@@ -18,9 +18,12 @@ class AnalysisResultActivity : AppCompatActivity() {
         val ivAnalyzedImage = findViewById<ImageView>(R.id.ivAnalyzedImage)
         val tvAccuracyResult = findViewById<TextView>(R.id.tvAccuracyResult)
         val btnBackHome = findViewById<Button>(R.id.btnBackHome)
+        val gaugeView = findViewById<ConfidenceGaugeView>(R.id.gaugeView)
 
         val imagePath = intent.getStringExtra("IMAGE_PATH")
-        val resultText = intent.getStringExtra("ACCURACY_RESULT")
+        val label = intent.getStringExtra("PREDICTION_LABEL") ?: "Sconosciuto"
+        val confidence = intent.getFloatExtra("PREDICTION_CONFIDENCE", 50f)
+        val modelName = intent.getStringExtra("MODEL_NAME") ?: ""
 
         if (imagePath != null) {
             val imgFile = File(imagePath)
@@ -30,13 +33,14 @@ class AnalysisResultActivity : AppCompatActivity() {
             }
         }
 
-        tvAccuracyResult.text = resultText ?: "Nessun risultato ricevuto."
+        tvAccuracyResult.text = "$modelName\n$label - ${String.format("%.1f", confidence)}%"
+
+        val isBuy = label.contains("COMPRA", ignoreCase = true)
+        gaugeView.setPrediction(isBuy, confidence)
 
         btnBackHome.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
-
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-
             startActivity(intent)
             finish()
         }

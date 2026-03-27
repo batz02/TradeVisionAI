@@ -9,22 +9,20 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 
+data class PredictionResult(val label: String, val confidence: Float)
+
 class TradeVisionAnalyzer(private val context: Context) {
 
     private val IMAGE_SIZE = 224
-
     private val NUM_CLASSES = 2
+    private val labels = listOf("COMPRA", "VENDI")
 
-    private val labels = listOf("Compra", "Vendi")
-
-    fun analyzeGraph(bitmap: Bitmap, modelFilename: String): String {
+    fun analyzeGraph(bitmap: Bitmap, modelFilename: String): PredictionResult {
         var interpreter: Interpreter? = null
         try {
             val options = Interpreter.Options()
             options.numThreads = 4
             interpreter = Interpreter(loadModelFile(modelFilename), options)
-
-            val startTime = System.currentTimeMillis()
 
             val resizedBitmap = Bitmap.createScaledBitmap(bitmap, IMAGE_SIZE, IMAGE_SIZE, true)
             val byteBuffer = convertBitmapToByteBuffer(resizedBitmap)
@@ -45,14 +43,13 @@ class TradeVisionAnalyzer(private val context: Context) {
                 }
             }
 
-            val inferenceTime = System.currentTimeMillis() - startTime
             val predictedLabel = if (maxIndex in labels.indices) labels[maxIndex] else "Sconosciuto"
 
-            return "$predictedLabel\n(Affidabilità: ${String.format("%.1f", maxProb)}% | ${inferenceTime}ms)"
+            return PredictionResult(predictedLabel, maxProb)
 
         } catch (e: Exception) {
             Log.e("ML_TEST", "Errore in inferenza con $modelFilename", e)
-            return "Errore AI: ${e.message}"
+            return PredictionResult("Errore", 0f)
         } finally {
             interpreter?.close()
         }
@@ -76,7 +73,6 @@ class TradeVisionAnalyzer(private val context: Context) {
         for (i in 0 until IMAGE_SIZE) {
             for (j in 0 until IMAGE_SIZE) {
                 val value = intValues[pixel++]
-
                 byteBuffer.putFloat(((value shr 16 and 0xFF) / 255.0f))
                 byteBuffer.putFloat(((value shr 8 and 0xFF) / 255.0f))
                 byteBuffer.putFloat(((value and 0xFF) / 255.0f))

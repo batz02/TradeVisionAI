@@ -1,7 +1,16 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
 }
 
 android {
@@ -17,7 +26,19 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        val finnhubKey = localProperties.getProperty("FINNHUB_API_KEY") ?: "\"\""
+        val awsUrl = localProperties.getProperty("AWS_API_URL") ?: "\"\""
+        val awsKey = localProperties.getProperty("AWS_API_KEY") ?: "\"\""
+
+        buildConfigField("String", "FINNHUB_API_KEY", finnhubKey)
+        buildConfigField("String", "AWS_API_URL", awsUrl)
+        buildConfigField("String", "AWS_API_KEY", awsKey)
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {

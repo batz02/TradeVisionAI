@@ -38,12 +38,11 @@ class AIHistoryAdapter(
 
         holder.tvHistoryModel.text = item.modelName
 
-        val cleanResult = item.resultText.substringAfter("\n\n").trim()
-        holder.tvHistoryResult.text = cleanResult
+        val formattedResult = "${item.label} (${String.format("%.1f", item.confidence)}%)"
+        holder.tvHistoryResult.text = formattedResult
 
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        val dateString = sdf.format(Date(item.timestamp))
-        holder.tvHistoryDate.text = dateString
+        holder.tvHistoryDate.text = sdf.format(Date(item.timestamp))
 
         val imgFile = File(item.imagePath)
         if (imgFile.exists()) {

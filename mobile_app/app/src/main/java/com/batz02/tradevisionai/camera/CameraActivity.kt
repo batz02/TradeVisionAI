@@ -1,5 +1,6 @@
 package com.batz02.tradevisionai.camera
 
+import com.batz02.tradevisionai.BuildConfig
 import android.Manifest
 import android.app.Activity
 import androidx.lifecycle.lifecycleScope
@@ -45,7 +46,6 @@ data class ModelInfo(
 
 enum class ModelType { LOCAL_TFLITE, CLOUD_AWS }
 
-
 class CameraActivity : AppCompatActivity() {
 
     private lateinit var viewFinder: PreviewView
@@ -54,7 +54,6 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var spinnerModels: Spinner
 
     private lateinit var analyzer: TradeVisionAnalyzer
-
 
     private val availableModels = listOf(
         ModelInfo("local_v2", "MobileNet V2 Quant (On-device)", ModelType.LOCAL_TFLITE, "mobilenet_v2_quant.tflite"),
@@ -191,28 +190,34 @@ class CameraActivity : AppCompatActivity() {
                     outputStream.close()
                 }
 
-                var resultString = ""
+                var labelResult = "Sconosciuto"
+                var confidenceResult = 50f
 
                 if (selectedModel.type == ModelType.LOCAL_TFLITE) {
                     val modelFilename = selectedModel.assetName ?: "mobilenet_v2_quant.tflite"
-                    resultString = "Risultato Edge: ${analyzer.analyzeGraph(bitmap, modelFilename)}"
+                    val prediction = analyzer.analyzeGraph(bitmap, modelFilename)
+                    labelResult = prediction.label
+                    confidenceResult = prediction.confidence
                 } else {
-                    resultString = withContext(Dispatchers.IO) {
+                    val cloudResultStr = withContext(Dispatchers.IO) {
                         val awsClient = AwsApiClient()
                         val modelId = selectedModel.id
-                        val baseUrl = "http://IP:PORT/predict"
+                        val baseUrl = BuildConfig.AWS_API_URL
                         awsClient.analyzeImageOnCloud(savedFile, baseUrl, modelId)
                     }
+                    labelResult = if (cloudResultStr.contains("COMPRA", ignoreCase = true)) "COMPRA" else "VENDI"
+                    val regex = Regex("(\\d+\\.?\\d*)")
+                    val match = regex.find(cloudResultStr)
+                    confidenceResult = match?.value?.toFloatOrNull() ?: 50f
                 }
-
-                val accuracyResult = "${selectedModel.displayName}\n\n$resultString"
 
                 withContext(Dispatchers.IO) {
                     val dao = AppDatabase.getDatabase(this@CameraActivity).analysisDao()
                     val entity = AnalysisEntity(
                         imagePath = savedFile.absolutePath,
                         modelName = selectedModel.displayName,
-                        resultText = accuracyResult,
+                        label = labelResult,
+                        confidence = confidenceResult,
                         timestamp = timestamp
                     )
                     dao.insertAnalysis(entity)
@@ -220,7 +225,9 @@ class CameraActivity : AppCompatActivity() {
 
                 val intent = Intent(this@CameraActivity, AnalysisResultActivity::class.java)
                 intent.putExtra("IMAGE_PATH", savedFile.absolutePath)
-                intent.putExtra("ACCURACY_RESULT", accuracyResult)
+                intent.putExtra("PREDICTION_LABEL", labelResult)
+                intent.putExtra("PREDICTION_CONFIDENCE", confidenceResult)
+                intent.putExtra("MODEL_NAME", selectedModel.displayName)
 
                 startActivity(intent)
 

@@ -8,6 +8,7 @@ data class AnalysisEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val imagePath: String,
     val modelName: String,
-    val resultText: String,
+    val label: String,
+    val confidence: Float,
     val timestamp: Long
 )
