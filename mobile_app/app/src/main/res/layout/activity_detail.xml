@@ -43,6 +43,16 @@
         android:textStyle="bold"
         android:text="Aggiungi alla Watchlist" />
 
+    <Button
+        android:id="@+id/btnAutomatedAnalysis"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#8A2BE2"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:text="🤖 Analisi con AI (ultimi 7 giorni)" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
