@@ -9,7 +9,7 @@ Il progetto sfrutta un'architettura ibrida: esegue modelli leggeri direttamente 
   * **Acquisizione Immagini:** Scatta foto ai grafici in tempo reale o caricale dalla galleria del dispositivo.
   * **Inferenza Ibrida (Edge & Cloud):** \* **Locale (TFLite):** Esecuzione offline e a latenza zero sul dispositivo.
       * **Cloud (AWS/FastAPI):** Elaborazione ad alta precisione tramite modelli Keras.
-  * **Selezione Dinamica del Modello:** Scegli tra *MobileNet V2 (Local)*, *Inception V3 (Cloud)*, *ResNet 50 (Cloud)* e *MobileNet V2 (Cloud)* direttamente dall'interfaccia.
+  * **Selezione Dinamica del Modello:** Scegli tra *MobileNet V2 (Local)*, *MobileNet V3 Small (Local)*, *Inception V3 (Cloud)* e *MobileNet V2 (Cloud)* direttamente dall'interfaccia.
   * **Cronologia Analisi:** Salvataggio automatico locale delle analisi passate (immagini e previsioni) per una rapida consultazione offline.
   * **Sicurezza API:** Comunicazione tra app e server protetta tramite API Keys crittografate.
 
