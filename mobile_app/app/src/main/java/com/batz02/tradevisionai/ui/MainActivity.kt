@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
+
         adapter = StockAdapter(emptyList(),
             onItemClick = { stockSelezionato ->
                 val intent = Intent(this, DetailActivity::class.java)
@@ -61,6 +63,22 @@ class MainActivity : AppCompatActivity() {
                         dao.cleanUpOrphans()
                     }
                 }
+            },
+
+            onItemLongClick = { stock ->
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Aggiungi alla Watchlist")
+                    .setMessage("Vuoi aggiungere ${stock.ticker} ai tuoi preferiti?")
+                    .setPositiveButton("Sì") { _, _ ->
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                dao.updateWatchlistStatus(stock.ticker, true)
+                            }
+                            Toast.makeText(this@MainActivity, "${stock.ticker} aggiunto alla Watchlist!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .setNegativeButton("Annulla", null)
+                    .show()
             }
         )
         recyclerView.adapter = adapter

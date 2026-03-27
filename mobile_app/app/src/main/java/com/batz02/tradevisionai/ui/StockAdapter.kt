@@ -8,15 +8,22 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.batz02.tradevisionai.R
 import com.batz02.tradevisionai.db.StockEntity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class StockAdapter(
     private var stockList: List<StockEntity>,
     private val onItemClick: (StockEntity) -> Unit,
-    private val onDeleteClick: (StockEntity) -> Unit
+    private val onDeleteClick: (StockEntity) -> Unit,
+    private val onItemLongClick: (StockEntity) -> Unit = {}
 ) : RecyclerView.Adapter<StockAdapter.StockViewHolder>() {
+
+    private val dateFormatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
     class StockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTicker: TextView = itemView.findViewById(R.id.tvItemTicker)
+        val tvAddedAt: TextView = itemView.findViewById(R.id.tvAddedAt)
         val tvPrice: TextView = itemView.findViewById(R.id.tvItemPrice)
         val btnDelete: ImageButton = itemView.findViewById(R.id.btnDeleteSingle)
     }
@@ -26,19 +33,25 @@ class StockAdapter(
         return StockViewHolder(view)
     }
 
-
     override fun onBindViewHolder(holder: StockViewHolder, position: Int) {
         val stock = stockList[position]
+
         holder.tvTicker.text = stock.ticker
 
+        val date = Date(stock.addedAt)
+        holder.tvAddedAt.text = dateFormatter.format(date)
 
         holder.tvPrice.text = "${stock.companyName}  |  ${stock.price} ${stock.currency}"
 
         holder.itemView.setOnClickListener { onItemClick(stock) }
+
+        holder.itemView.setOnLongClickListener {
+            onItemLongClick(stock)
+            true
+        }
+
         holder.btnDelete.setOnClickListener { onDeleteClick(stock) }
     }
-
-
 
     override fun getItemCount(): Int = stockList.size
 

@@ -19,7 +19,7 @@
         android:id="@+id/btnClearHistory"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:text="🗑️ Svuota Cronologia Titoli"
+        android:text="🗑️ Svuota Cronologia Ricerche"
         android:backgroundTint="#D32F2F"
         android:textColor="#FFFFFF"
         android:layout_marginBottom="16dp" />
