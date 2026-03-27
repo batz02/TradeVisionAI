@@ -176,8 +176,6 @@ class CameraActivity : AppCompatActivity() {
     private fun processImageAndNavigate(bitmap: Bitmap) {
         val selectedModel = spinnerModels.selectedItem as ModelInfo
 
-        Toast.makeText(this, "Analisi in corso...", Toast.LENGTH_LONG).show()
-
         lifecycleScope.launch {
             try {
                 val timestamp = System.currentTimeMillis()
@@ -199,17 +197,25 @@ class CameraActivity : AppCompatActivity() {
                     labelResult = prediction.label
                     confidenceResult = prediction.confidence
                 } else {
-                    val cloudResultStr = withContext(Dispatchers.IO) {
-                        val awsClient = AwsApiClient()
-                        val modelId = selectedModel.id
-                        val baseUrl = BuildConfig.AWS_API_URL
-                        awsClient.analyzeImageOnCloud(savedFile, baseUrl, modelId)
-                    }
-                    labelResult = if (cloudResultStr.contains("COMPRA", ignoreCase = true)) "COMPRA" else "VENDI"
-                    val regex = Regex("(\\d+\\.?\\d*)")
-                    val match = regex.find(cloudResultStr)
-                    confidenceResult = match?.value?.toFloatOrNull() ?: 50f
-                }
+            val cloudResultStr = withContext(Dispatchers.IO) {
+                val awsClient = AwsApiClient()
+                val modelId = selectedModel.id
+                val baseUrl = BuildConfig.AWS_API_URL
+                awsClient.analyzeImageOnCloud(savedFile, baseUrl, modelId)
+            }
+
+            if (cloudResultStr.contains("Errore", ignoreCase = true) ||
+                cloudResultStr.contains("Failed", ignoreCase = true) ||
+                (!cloudResultStr.contains("COMPRA", ignoreCase = true) && !cloudResultStr.contains("VENDI", ignoreCase = true))) {
+
+                throw Exception("Errore API: $cloudResultStr")
+            }
+
+            labelResult = if (cloudResultStr.contains("COMPRA", ignoreCase = true)) "COMPRA" else "VENDI"
+            val regex = Regex("(\\d+\\.?\\d*)")
+            val match = regex.find(cloudResultStr)
+            confidenceResult = match?.value?.toFloatOrNull() ?: 50f
+        }
 
                 withContext(Dispatchers.IO) {
                     val dao = AppDatabase.getDatabase(this@CameraActivity).analysisDao()
@@ -233,7 +239,7 @@ class CameraActivity : AppCompatActivity() {
 
             } catch (e: Exception) {
                 Log.e("AWS_ERROR", "Errore: ${e.message}")
-                Toast.makeText(this@CameraActivity, "Errore durante l'elaborazione.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CameraActivity, "Modello non disponibile.", Toast.LENGTH_SHORT).show()
             }
         }
     }

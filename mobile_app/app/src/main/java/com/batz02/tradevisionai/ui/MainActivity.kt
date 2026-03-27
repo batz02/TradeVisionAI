@@ -9,12 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.batz02.tradevisionai.R
 import com.batz02.tradevisionai.camera.CameraActivity
 import com.batz02.tradevisionai.db.AppDatabase
+import com.batz02.tradevisionai.network.StockUpdateWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private lateinit var adapter: StockAdapter
@@ -48,16 +55,25 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onDeleteClick = { stockDaCancellare ->
+                // NOTA: Non serve più chiamare aggiornaCronologia() alla fine!
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         dao.hideFromHistory(stockDaCancellare.ticker)
                         dao.cleanUpOrphans()
                     }
-                    aggiornaCronologia()
                 }
             }
         )
         recyclerView.adapter = adapter
+
+        // --- ASCOLTO REATTIVO DEL DATABASE ---
+        lifecycleScope.launch {
+            dao.getHistory().collect { lista ->
+                tvStatus.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
+                adapter.updateData(lista)
+            }
+        }
+        // -------------------------------------
 
         btnOpenAI.setOnClickListener {
             startActivity(Intent(this, CameraActivity::class.java))
@@ -74,19 +90,23 @@ class MainActivity : AppCompatActivity() {
         btnGoToWatchlist.setOnClickListener {
             startActivity(Intent(this, WatchlistActivity::class.java))
         }
+
+        setupPeriodicStockUpdates()
     }
 
-    override fun onResume() {
-        super.onResume()
-        aggiornaCronologia()
-    }
+    private fun setupPeriodicStockUpdates() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
 
-    private fun aggiornaCronologia() {
-        val dao = AppDatabase.getDatabase(this).stockDao()
-        lifecycleScope.launch {
-            val lista = withContext(Dispatchers.IO) { dao.getHistory() }
-            tvStatus.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
-            adapter.updateData(lista)
-        }
+        val updateRequest = PeriodicWorkRequestBuilder<StockUpdateWorker>(30, TimeUnit.MINUTES)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "STOCK_PRICE_UPDATE",
+            ExistingPeriodicWorkPolicy.KEEP,
+            updateRequest
+        )
     }
 }

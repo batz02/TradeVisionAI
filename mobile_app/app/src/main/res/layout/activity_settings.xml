@@ -4,21 +4,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#0D1117"> <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="⚙️ Impostazioni"
-    android:textColor="#FFFFFF"
-    android:textSize="28sp"
-    android:textStyle="bold"
-    android:layout_marginBottom="32dp" />
+    android:background="#0D1117">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⚙️ Impostazioni"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
 
     <Button
         android:id="@+id/btnClearHistory"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:text="🗑️ Svuota Cronologia"
+        android:text="🗑️ Svuota Cronologia Titoli"
         android:backgroundTint="#D32F2F"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnClearAIHistory"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:text="🤖 Svuota Storico Analisi AI"
+        android:backgroundTint="#8A2BE2"
         android:textColor="#FFFFFF"
         android:layout_marginBottom="24dp" />
 

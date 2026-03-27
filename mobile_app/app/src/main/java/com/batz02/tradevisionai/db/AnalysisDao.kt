@@ -15,4 +15,8 @@ interface AnalysisDao {
 
     @Delete
     fun deleteAnalysis(analysis: AnalysisEntity)
+
+    // --- NUOVA QUERY ---
+    @Query("DELETE FROM analysis_history")
+    fun clearAllAnalysis()
 }

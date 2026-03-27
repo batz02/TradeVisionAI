@@ -38,29 +38,24 @@ class WatchlistActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onDeleteClick = { stockDaRimuovere ->
+                // NOTA: Non serve più chiamare caricaWatchlist() alla fine!
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
                         dao.updateWatchlistStatus(stockDaRimuovere.ticker, false)
                         dao.cleanUpOrphans()
                     }
-                    caricaWatchlist()
                 }
             }
         )
         recyclerView.adapter = adapter
-    }
 
-    override fun onResume() {
-        super.onResume()
-        caricaWatchlist()
-    }
-
-    private fun caricaWatchlist() {
-        val dao = AppDatabase.getDatabase(this).stockDao()
+        // --- ASCOLTO REATTIVO DELLA WATCHLIST ---
         lifecycleScope.launch {
-            val lista = withContext(Dispatchers.IO) { dao.getWatchlist() }
-            tvStatus.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
-            adapter.updateData(lista)
+            dao.getWatchlist().collect { lista ->
+                tvStatus.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
+                adapter.updateData(lista)
+            }
         }
+        // ----------------------------------------
     }
 }
