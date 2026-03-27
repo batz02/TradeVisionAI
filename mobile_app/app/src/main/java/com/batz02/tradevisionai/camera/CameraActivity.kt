@@ -1,8 +1,15 @@
 package com.batz02.tradevisionai.camera
 
+import android.content.ContentValues
+import android.graphics.ImageDecoder
+import android.os.Build
+import androidx.camera.core.ImageCaptureException
+import java.text.SimpleDateFormat
+import java.util.Locale
 import com.batz02.tradevisionai.BuildConfig
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,6 +17,7 @@ import kotlinx.coroutines.withContext
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -31,9 +39,12 @@ import com.batz02.tradevisionai.network.AwsApiClient
 import com.batz02.tradevisionai.ui.AnalysisResultActivity
 import com.batz02.tradevisionai.db.AppDatabase
 import com.batz02.tradevisionai.db.AnalysisEntity
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import android.graphics.Matrix
+import android.media.ExifInterface
 
 data class ModelInfo(
     val id: String,
@@ -68,7 +79,8 @@ class CameraActivity : AppCompatActivity() {
         if (isGranted) {
             startCamera()
         } else {
-            Toast.makeText(this, "Permesso fotocamera negato.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Permesso fotocamera necessario per l'analisi.", Toast.LENGTH_LONG).show()
+            finish()
         }
     }
 
@@ -129,32 +141,105 @@ class CameraActivity : AppCompatActivity() {
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
 
-        Toast.makeText(this, "Acquisizione e Analisi...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Acquisizione e analisi...", Toast.LENGTH_SHORT).show()
 
-        imageCapture.takePicture(
-            ContextCompat.getMainExecutor(this),
-            object : ImageCapture.OnImageCapturedCallback() {
+        val sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val saveToGallery = sharedPreferences.getBoolean("SAVE_TO_GALLERY", false)
 
-                override fun onCaptureSuccess(image: androidx.camera.core.ImageProxy) {
-                    var bitmap = image.toBitmap()
-
-                    val rotationDegrees = image.imageInfo.rotationDegrees
-                    image.close()
-
-                    if (rotationDegrees != 0) {
-                        val matrix = android.graphics.Matrix()
-                        matrix.postRotate(rotationDegrees.toFloat())
-                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-                    }
-
-                    processImageAndNavigate(bitmap)
-                }
-
-                override fun onError(exception: androidx.camera.core.ImageCaptureException) {
-                    Log.e("CAMERA_TEST", "Errore nello scatto: ${exception.message}", exception)
+        if (saveToGallery) {
+            val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ITALIAN).format(System.currentTimeMillis())
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                    put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/TradeVisionAI")
                 }
             }
-        )
+
+            val outputOptions = ImageCapture.OutputFileOptions.Builder(
+                contentResolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+            ).build()
+
+            imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(this),
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                        val savedUri = outputFileResults.savedUri
+                        if (savedUri != null) {
+                            Toast.makeText(this@CameraActivity, "Foto salvata in galleria", Toast.LENGTH_SHORT).show()
+                            try {
+                                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                    val source = ImageDecoder.createSource(contentResolver, savedUri)
+                                    ImageDecoder.decodeBitmap(source)
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    MediaStore.Images.Media.getBitmap(contentResolver, savedUri)
+                                }
+                                val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+                                processImageAndNavigate(mutableBitmap)
+                            } catch (e: Exception) {
+                                Log.e("CAMERA_TEST", "Errore: ${e.message}")
+                            }
+                        }
+                    }
+                    override fun onError(exception: ImageCaptureException) {
+                        Toast.makeText(this@CameraActivity, "Errore salvataggio foto.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
+        } else {
+            val tempFile = File(cacheDir, "temp_capture.jpg")
+            val outputOptions = ImageCapture.OutputFileOptions.Builder(tempFile).build()
+
+            imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(this),
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                        try {
+                            val bitmap = BitmapFactory.decodeFile(tempFile.absolutePath)
+
+                            val exif = ExifInterface(tempFile.absolutePath)
+                            val orientation = exif.getAttributeInt(
+                                ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_UNDEFINED
+                            )
+
+                            val rotationAngle = when (orientation) {
+                                ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                                else -> 0f
+                            }
+
+                            val rotatedBitmap = if (rotationAngle != 0f) {
+                                val matrix = Matrix()
+                                matrix.postRotate(rotationAngle)
+                                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                            } else {
+                                bitmap
+                            }
+
+                            val mutableBitmap = rotatedBitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+                            tempFile.delete()
+
+                            processImageAndNavigate(mutableBitmap)
+                        } catch (e: Exception) {
+                            Log.e("CAMERA_TEST", "Errore nel caricamento del bitmap interno: ${e.message}")
+                        }
+                    }
+
+                    override fun onError(exception: ImageCaptureException) {
+                        Log.e("CAMERA_TEST", "Errore nello scatto: ${exception.message}")
+                        Toast.makeText(this@CameraActivity, "Errore acquisizione foto.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -164,6 +249,7 @@ class CameraActivity : AppCompatActivity() {
             if (imageUri != null) {
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+                    Toast.makeText(this, "Analisi in corso...", Toast.LENGTH_SHORT).show()
                     processImageAndNavigate(bitmap)
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -171,7 +257,6 @@ class CameraActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun processImageAndNavigate(bitmap: Bitmap) {
         val selectedModel = spinnerModels.selectedItem as ModelInfo
@@ -197,25 +282,25 @@ class CameraActivity : AppCompatActivity() {
                     labelResult = prediction.label
                     confidenceResult = prediction.confidence
                 } else {
-            val cloudResultStr = withContext(Dispatchers.IO) {
-                val awsClient = AwsApiClient()
-                val modelId = selectedModel.id
-                val baseUrl = BuildConfig.AWS_API_URL
-                awsClient.analyzeImageOnCloud(savedFile, baseUrl, modelId)
-            }
+                    val cloudResultStr = withContext(Dispatchers.IO) {
+                        val awsClient = AwsApiClient()
+                        val modelId = selectedModel.id
+                        val baseUrl = BuildConfig.AWS_API_URL
+                        awsClient.analyzeImageOnCloud(savedFile, baseUrl, modelId)
+                    }
 
-            if (cloudResultStr.contains("Errore", ignoreCase = true) ||
-                cloudResultStr.contains("Failed", ignoreCase = true) ||
-                (!cloudResultStr.contains("COMPRA", ignoreCase = true) && !cloudResultStr.contains("VENDI", ignoreCase = true))) {
+                    if (cloudResultStr.contains("Errore", ignoreCase = true) ||
+                        cloudResultStr.contains("Failed", ignoreCase = true) ||
+                        (!cloudResultStr.contains("COMPRA", ignoreCase = true) && !cloudResultStr.contains("VENDI", ignoreCase = true))) {
 
-                throw Exception("Errore API: $cloudResultStr")
-            }
+                        throw Exception("Errore API: $cloudResultStr")
+                    }
 
-            labelResult = if (cloudResultStr.contains("COMPRA", ignoreCase = true)) "COMPRA" else "VENDI"
-            val regex = Regex("(\\d+\\.?\\d*)")
-            val match = regex.find(cloudResultStr)
-            confidenceResult = match?.value?.toFloatOrNull() ?: 50f
-        }
+                    labelResult = if (cloudResultStr.contains("COMPRA", ignoreCase = true)) "COMPRA" else "VENDI"
+                    val regex = Regex("(\\d+\\.?\\d*)")
+                    val match = regex.find(cloudResultStr)
+                    confidenceResult = match?.value?.toFloatOrNull() ?: 50f
+                }
 
                 withContext(Dispatchers.IO) {
                     val dao = AppDatabase.getDatabase(this@CameraActivity).analysisDao()
@@ -228,6 +313,8 @@ class CameraActivity : AppCompatActivity() {
                     )
                     dao.insertAnalysis(entity)
                 }
+
+                Toast.makeText(this@CameraActivity, "Analisi completata", Toast.LENGTH_SHORT).show()
 
                 val intent = Intent(this@CameraActivity, AnalysisResultActivity::class.java)
                 intent.putExtra("IMAGE_PATH", savedFile.absolutePath)

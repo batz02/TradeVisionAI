@@ -26,6 +26,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        resourceConfigurations.add("it")
+
         val finnhubKey = localProperties.getProperty("FINNHUB_API_KEY") ?: "\"\""
         val awsUrl = localProperties.getProperty("AWS_API_URL") ?: "\"\""
         val awsKey = localProperties.getProperty("AWS_API_KEY") ?: "\"\""

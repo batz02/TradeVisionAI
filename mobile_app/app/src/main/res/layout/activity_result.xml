@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0D1117"
@@ -59,13 +60,49 @@
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/gaugeView" />
 
+    <LinearLayout
+        android:id="@+id/actionButtonsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="32dp"
+        android:weightSum="2"
+        app:layout_constraintTop_toBottomOf="@id/tvAccuracyResult"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#1F6FEB"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:text="Condividi 📤" />
+
+        <Button
+            android:id="@+id/btnSaveGallery"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:text="Salva 💾" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnBackHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Torna alla Home"
-        android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@id/tvAccuracyResult"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#21262D"
+        android:textColor="#8B949E"
+        app:layout_constraintTop_toBottomOf="@id/actionButtonsContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -1,72 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#0D1117"
-    android:gravity="center"
-    android:padding="32dp">
-
-    <TextView
-        android:id="@+id/tvDetailTicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="36sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvDetailName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#8B949E"
-        android:textSize="18sp"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:id="@+id/tvDetailPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#00E676"
-        android:textSize="48sp"
-        android:textStyle="bold"
-        android:layout_marginTop="32dp"
-        android:text="Caricamento..." />
-
-    <Button
-        android:id="@+id/btnSaveWatchlist"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="48dp"
-        android:backgroundTint="#00E676"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:text="Aggiungi alla Watchlist" />
-
-    <Button
-        android:id="@+id/btnAutomatedAnalysis"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#8A2BE2"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:text="🤖 Analisi con AI (ultimi 7 giorni)" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ultime Notizie:"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="8dp" />
+    android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/containerNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="8dp" />
+        android:gravity="center"
+        android:padding="32dp">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvDetailTicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDetailName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#8B949E"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/tvDetailPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#00E676"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp"
+            android:text="Caricamento..." />
+
+        <Button
+            android:id="@+id/btnSaveWatchlist"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="48dp"
+            android:backgroundTint="#00E676"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:text="Aggiungi alla Watchlist" />
+
+        <Button
+            android:id="@+id/btnAutomatedAnalysis"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#8A2BE2"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:text="🤖 Analisi con AI (ultimi 7 giorni)" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ultime Notizie:"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/containerNews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="32dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnBackToSearch"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#1F6FEB"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:text="🔍 Cerca" />
+
+            <Button
+                android:id="@+id/btnBackToHome"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="#21262D"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:text="🏠 Home" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

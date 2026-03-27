@@ -39,6 +39,9 @@ class DetailActivity : AppCompatActivity() {
         val btnAutomatedAnalysis = findViewById<Button>(R.id.btnAutomatedAnalysis)
         val containerNews = findViewById<LinearLayout>(R.id.containerNews)
 
+        val btnBackToSearch = findViewById<Button>(R.id.btnBackToSearch)
+        val btnBackToHome = findViewById<Button>(R.id.btnBackToHome)
+
         val ticker = intent.getStringExtra("TICKER") ?: return
         val companyName = intent.getStringExtra("COMPANY_NAME") ?: "Azienda Sconosciuta"
 
@@ -150,6 +153,20 @@ class DetailActivity : AppCompatActivity() {
                     finish()
                 }
             }
+        }
+
+        btnBackToSearch.setOnClickListener {
+            val intent = Intent(this@DetailActivity, SearchActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+            finish()
+        }
+
+        btnBackToHome.setOnClickListener {
+            val intent = Intent(this@DetailActivity, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+            finish()
         }
     }
 

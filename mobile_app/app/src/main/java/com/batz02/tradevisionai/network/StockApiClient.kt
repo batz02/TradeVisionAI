@@ -82,7 +82,7 @@ class StockApiClient {
                 val jsonString = response.body?.string()
                 if (jsonString != null) {
                     val jsonArray = org.json.JSONArray(jsonString)
-                    val maxNews = if (jsonArray.length() > 5) 5 else jsonArray.length()
+                    val maxNews = if (jsonArray.length() > 4) 4 else jsonArray.length()
 
                     for (i in 0 until maxNews) {
                         val item = jsonArray.getJSONObject(i)
