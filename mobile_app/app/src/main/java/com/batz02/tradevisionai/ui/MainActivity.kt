@@ -76,15 +76,22 @@ class MainActivity : AppCompatActivity() {
             },
 
             onItemLongClick = { stock ->
+                // Mostra sempre il dialog per aggiungerlo
                 androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle("Aggiungi alla Watchlist")
-                    .setMessage("Vuoi aggiungere ${stock.ticker} ai tuoi preferiti?")
+                    .setMessage("Vuoi aggiungere ${stock.ticker} alla tua Watchlist?")
                     .setPositiveButton("Sì") { _, _ ->
-                        lifecycleScope.launch {
-                            withContext(Dispatchers.IO) {
-                                dao.updateWatchlistStatus(stock.ticker, true)
+                        // Dopo che l'utente clicca "Sì", facciamo il controllo
+                        if (stock.inWatchlist) {
+                            Toast.makeText(this@MainActivity, "${stock.ticker} è già presente!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // Se non è tra i preferiti, lo aggiorniamo nel DB
+                            lifecycleScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    dao.updateWatchlistStatus(stock.ticker, true)
+                                }
+                                Toast.makeText(this@MainActivity, "${stock.ticker} aggiunto alla Watchlist!", Toast.LENGTH_SHORT).show()
                             }
-                            Toast.makeText(this@MainActivity, "${stock.ticker} aggiunto alla Watchlist!", Toast.LENGTH_SHORT).show()
                         }
                     }
                     .setNegativeButton("Annulla", null)

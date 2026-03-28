@@ -46,7 +46,7 @@
             android:backgroundTint="@color/accent_green_bright"
             android:textColor="@color/text_on_accent"
             android:textStyle="bold"
-            android:text="Aggiungi alla Watchlist" />
+            android:text="⭐ Aggiungi alla Watchlist" />
 
         <Button
             android:id="@+id/btnAutomatedAnalysis"
