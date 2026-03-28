@@ -75,7 +75,7 @@ Il server Cloud è containerizzato con **Docker** e gestisce il caricamento simu
 3.  Nel file `local.properties`, inserisci i campi richiesti:
 ```
 FINNHUB_API_KEY=""
-AWS_API_URL="http://IP:PORT"
+AWS_API_URL="http://IP:30080"
 AWS_API_KEY=""
 ```
 4.  Compila ed esegui sull'emulatore o su dispositivo fisico.
