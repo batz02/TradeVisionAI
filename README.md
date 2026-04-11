@@ -7,10 +7,20 @@ The project leverages a hybrid architecture: it runs lightweight models directly
 ## Screenshots
 
 <div align="center">
-  <img src="images/home_light-mode.png" alt="Home Screen - Light Mode" width="200"/>
-  <img src="images/analysis_dark-mode.png" alt="Market Analysis Screen - Dark Mode" width="200"/>
-  <img src="images/details_dark-mode.png" alt="Prediction Details - Dark Mode" width="200"/>
-  <img src="images/settings_dark-mode.png" alt="Settings Screen - Dark Mode" width="200"/>
+  <table>
+    <tr>
+      <td align="center"><img src="images/home_light-mode.png" alt="Home Screen - Light Mode" width="200"/></td>
+      <td align="center"><img src="images/details_dark-mode.png" alt="Market Analysis Screen - Dark Mode" width="200"/></td>
+      <td align="center"><img src="images/analysis_dark-mode.png" alt="Prediction Details - Dark Mode" width="200"/></td>
+      <td align="center"><img src="images/settings_dark-mode.png" alt="Settings Screen - Dark Mode" width="200"/></td>
+    </tr>
+    <tr>
+      <td align="center"><sub>Home Screen - Light Mode</sub></td>
+      <td align="center"><sub>Market Analysis Screen - Dark Mode</sub></td>
+      <td align="center"><sub>Prediction Details - Dark Mode</sub></td>
+      <td align="center"><sub>Settings Screen - Dark Mode</sub></td>
+    </tr>
+  </table>
 </div>
 
 -----
