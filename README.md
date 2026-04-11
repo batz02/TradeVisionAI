@@ -13,8 +13,6 @@ The project leverages a hybrid architecture: it runs lightweight models directly
   <img src="images/settings_dark-mode.png" alt="Settings Screen - Dark Mode" width="200"/>
 </div>
 
-*(Note: Depending on your markdown viewer, you can also use standard image tags like `![Home](images/home_light-mode.png)`)*
-
 -----
 
 ## Main Features
