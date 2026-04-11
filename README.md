@@ -1,46 +1,64 @@
 # TradeVision AI
 
-**TradeVision AI** è un'applicazione Android con AI integrata, progettata per analizzare grafici del mercato finanziario e fornire previsioni istantanee sui trend (Rialzista/Ribassista).
+**TradeVision AI** is an Android application with integrated AI, designed to analyze financial market charts and provide instant trend predictions (Bullish/Bearish).
 
-Il progetto sfrutta un'architettura ibrida: esegue modelli leggeri direttamente sul dispositivo (**Edge AI**) per un'analisi offline istantanea e si appoggia ad un server cloud scalabile (**Cloud AI su AWS**) per inferenze ad alta precisione tramite reti neurali profonde.
+The project leverages a hybrid architecture: it runs lightweight models directly on the device (**Edge AI**) for instant offline analysis, and relies on a scalable cloud server (**Cloud AI on AWS**) for high-precision inference using deep neural networks.
 
-## Funzionalità Principali
+## Screenshots
 
-  * **Acquisizione Immagini:** Scatta foto ai grafici in tempo reale o caricale dalla galleria del dispositivo.
-  * **Inferenza Ibrida (Edge & Cloud):** \* **Locale (TFLite):** Esecuzione offline e a latenza zero sul dispositivo.
-      * **Cloud (AWS/FastAPI):** Elaborazione ad alta precisione tramite modelli Keras.
-  * **Selezione Dinamica del Modello:** Scegli tra *MobileNet V2 (Local)*, *MobileNet V3 Small (Local)*, *Inception V3 (Cloud)* e *MobileNet V2 (Cloud)* direttamente dall'interfaccia.
-  * **Cronologia Analisi:** Salvataggio automatico locale delle analisi passate (immagini e previsioni) per una rapida consultazione offline.
-  * **Sicurezza API:** Comunicazione tra app e server protetta tramite API Keys crittografate.
+<div align="center">
+  <img src="images/home_light-mode.png" alt="Home Screen - Light Mode" width="200"/>
+  <img src="images/analysis_dark-mode.png" alt="Market Analysis Screen - Dark Mode" width="200"/>
+  <img src="images/details_dark-mode.png" alt="Prediction Details - Dark Mode" width="200"/>
+  <img src="images/settings_dark-mode.png" alt="Settings Screen - Dark Mode" width="200"/>
+</div>
 
-## Stack Tecnologico
+*(Note: Depending on your markdown viewer, you can also use standard image tags like `![Home](images/home_light-mode.png)`)*
+
+-----
+
+## Main Features
+
+  * **Image Capture:** Take photos of charts in real-time or upload them from the device's gallery.
+  * **Hybrid Inference (Edge & Cloud):**
+      * **Local (TFLite):** Offline, zero-latency execution directly on the device.
+      * **Cloud (AWS/FastAPI):** High-precision processing using Keras models.
+  * **Dynamic Model Selection:** Choose between *MobileNet V2 (Local)*, *MobileNet V3 Small (Local)*, *Inception V3 (Cloud)*, and *MobileNet V2 (Cloud)* directly from the interface.
+  * **Analysis History:** Automatic local saving of past analyses (images and predictions) for quick offline reference.
+  * **API Security:** Communication between the app and the server is protected by encrypted API Keys.
+
+-----
+
+## Tech Stack
 
 ### Frontend (Android)
 
-  * **Linguaggio:** Kotlin
-  * **Librerie Principali:**
-      * `TensorFlow Lite` / `LiteRT` (Inferenza Edge)
-      * `OkHttp3` (Chiamate API REST sincrone e asincrone)
-      * `Coroutines` (Gestione thread in background)
-      * `Gson` & `SharedPreferences` (Database locale per la cronologia)
-      * `RecyclerView` (UI dinamica per la cronologia)
+  * **Language:** Kotlin
+  * **Main Libraries:**
+      * `TensorFlow Lite` / `LiteRT` (Edge Inference)
+      * `OkHttp3` (Synchronous and asynchronous REST API calls)
+      * `Coroutines` (Background thread management)
+      * `Gson` & `SharedPreferences` (Local database for history)
+      * `RecyclerView` (Dynamic UI for history)
 
 ### Backend (Cloud / AWS)
 
-  * **Linguaggio:** Python 3.10
-  * **Framework API:** FastAPI + Uvicorn
+  * **Language:** Python 3.10
+  * **API Framework:** FastAPI + Uvicorn
   * **Machine Learning:** TensorFlow 2.x / Keras (Multi-model loading)
-  * **Infrastruttura:** Docker, Docker Compose, AWS EC2 (Ubuntu)
+  * **Infrastructure:** Docker, Docker Compose, AWS EC2 (Ubuntu)
 
-## Architettura del Backend
+-----
 
-Il server Cloud è containerizzato con **Docker** e gestisce il caricamento simultaneo di più modelli in RAM al momento dell'avvio. Utilizza il *Monkey Patching* e il `custom_object_scope` di Keras per garantire la retrocompatibilità con i layer di Data Augmentation e operazioni matematiche personalizzate (`TrueDivide`, `GetItem`) di Keras 3.
+## Backend Architecture
 
-**Endpoint Principale:**
+The Cloud server is containerized with **Docker** and handles the simultaneous loading of multiple models into RAM at startup. It uses *Monkey Patching* and Keras' `custom_object_scope` to ensure backward compatibility with Data Augmentation layers and custom mathematical operations (`TrueDivide`, `GetItem`) of Keras 3.
+
+**Main Endpoint:**
 `POST /predict?model_id={id}`
 
   * **Headers:** `X-API-KEY`
-  * **Body:** Immagine codificata in `multipart/form-data`
+  * **Body:** Image encoded as `multipart/form-data`
   * **Response:**
     ```json
     {
@@ -50,37 +68,39 @@ Il server Cloud è containerizzato con **Docker** e gestisce il caricamento simu
     }
     ```
 
+-----
 
-## Guida all'installazione
+## Installation Guide
 
-### 1\. Configurazione Backend (Docker)
+### 1\. Backend Configuration (Docker)
 
-1.  Clona il repository sul tuo server.
-2.  Inserisci i modelli addestrati (tramite notebook nella cartella `AI_TRAINING`) nella root del backend.
-3.  Imposta la tua chiave segreta nel file `docker-compose.yml`:
+1.  Clone the repository on your server.
+2.  Place the trained models (generated via notebooks in the `AI_TRAINING` folder) into the backend root directory.
+3.  Set your secret key in the `docker-compose.yml` file:
     ```yaml
     environment:
       - API_KEY_SECRET=API
     ```
-4.  Avvia il container:
+4.  Start the container:
     ```bash
     docker-compose build --no-cache
     docker-compose up -d
     ```
 
-### 2\. Configurazione Frontend (Android Studio)
+### 2\. Frontend Configuration (Android Studio)
 
-1.  Apri il progetto con Android Studio.
-2.  Inserisci i tuoi file TFLite nella cartella `app/src/main/assets/`.
-3.  Nel file `local.properties`, inserisci i campi richiesti:
-```
-FINNHUB_API_KEY=""
-AWS_API_URL="http://IP:30080"
-AWS_API_KEY=""
-```
-4.  Compila ed esegui sull'emulatore o su dispositivo fisico.
+1.  Open the project in Android Studio.
+2.  Place your TFLite files inside the `app/src/main/assets/` folder.
+3.  In the `local.properties` file, insert the required fields:
+    ```properties
+    FINNHUB_API_KEY=""
+    AWS_API_URL="http://IP:30080"
+    AWS_API_KEY=""
+    ```
+4.  Build and run the app on an emulator or a physical device.
 
+-----
 
-## Autore
+## Author
 
-Sviluppato da **Matteo Battilori** come progetto per il corso `Programmazione Mobile`.
+Developed by **Matteo Battilori** as a project for the `Mobile Programming` course.
